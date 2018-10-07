@@ -18,7 +18,7 @@ impl MudServer {
     }
 
     pub fn add_client(&mut self, stream: TcpStream) -> usize {
-        let mut client = Client::new(self.next_id, stream);
+        let client = Client::new(self.next_id, stream);
         self.clients.push(client);
 
         self.next_id += 1;
@@ -27,5 +27,11 @@ impl MudServer {
 
     pub fn write_to_client(&mut self, id: usize, text: String) {
         self.clients[id].write(text);
+    }
+
+    pub fn update(&mut self) {
+        for id in 0..self.clients.len() {
+            self.clients[id].update();
+        }
     }
 }
