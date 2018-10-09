@@ -2,7 +2,7 @@ use std::net::TcpStream;
 use std::io::prelude::*;
 use std::io::Write;
 
-use player::Player;
+use game::player::Player;
 
 pub struct Client {
     id: usize,
@@ -19,7 +19,7 @@ impl Client {
         }
     }
 
-    pub fn write(&mut self, text:String) {
+    pub fn send(&mut self, text: String) {
         let response = format!("{}\n", text);
         self.stream.write(response.as_bytes()).expect("Response failed");
     }
@@ -45,6 +45,6 @@ impl Client {
             println!("!!!!!!!!!!!!!!!");
         }
 
-        self.write(format!("text recived: {}", text));
+        self.send(format!("text recived: {}", text));
     }
 }

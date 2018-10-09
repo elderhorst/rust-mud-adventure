@@ -1,8 +1,6 @@
-mod player;
-mod client;
-mod mudserver;
+extern crate rust_mud;
 
-use mudserver::MudServer;
+use rust_mud::mud::mudserver::MudServer;
 
 use std::net::TcpListener;
 use std::io::ErrorKind;
@@ -19,7 +17,7 @@ fn main() {
         match stream {
             Ok(mut stream) => {
                 mudserver.add_client(stream);
-                mudserver.write_to_client(0, format!("hello world {}", 0));
+                mudserver.send_message(0, format!("hello world {}", 0));
 
                 println!("Connection opened");
             }

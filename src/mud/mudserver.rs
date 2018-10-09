@@ -1,7 +1,7 @@
 use std::net::TcpStream;
 use std::vec::Vec;
 
-use client::Client;
+use mud::client::Client;
 
 //#[derive(Copy, Clone)]
 pub struct MudServer {
@@ -25,8 +25,8 @@ impl MudServer {
         self.next_id.clone()
     }
 
-    pub fn write_to_client(&mut self, id: usize, text: String) {
-        self.clients[id].write(text);
+    pub fn send_message(&mut self, id: usize, text: String) {
+        self.clients[id].send(text);
     }
 
     pub fn update(&mut self) {
