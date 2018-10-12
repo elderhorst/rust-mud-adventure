@@ -2,11 +2,13 @@ use std::net::TcpStream;
 use std::vec::Vec;
 
 use mud::client::Client;
+use game::game::Game;
 
 //#[derive(Copy, Clone)]
 pub struct MudServer {
     pub clients: Vec<Client>,
-    pub next_id: usize
+    pub next_id: usize,
+    pub game: Game,
 }
 
 impl MudServer {
@@ -14,6 +16,7 @@ impl MudServer {
         MudServer {
             clients: Vec::new(),
             next_id: 0,
+            game: Game::new(),
         }
     }
 

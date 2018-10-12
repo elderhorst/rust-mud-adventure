@@ -22,6 +22,10 @@ impl RaceFactory {
         race_factory
     }
 
+    pub fn get_races(self) -> HashMap<String, Race> {
+        self.races
+    }
+
     fn create_races(&mut self) {
         self.races.insert("Aasimar".to_string(),
             Race {

@@ -6,7 +6,7 @@ use rooms::room::Room;
 
 //from game.database import does_name_exist, does_password_match, load_player_data
 
-pub fn handle_login_command(id: &usize, mud: &mut MudServer, rooms: &HashMap<i32, Room>, command: &String, params: &String) -> bool {
+pub fn handle_login_command(id: &usize, rooms: &HashMap<String, Room>, command: &String, params: &String) -> bool {
     //let salt = b"$2b$12$A85OpoWnP7jlqI9fubV4Du";
 
     /*if players[id].status.main_menu and command == "1":

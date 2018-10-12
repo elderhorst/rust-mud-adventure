@@ -4,33 +4,35 @@ use commands::charactercreation;
 use commands::login;
 use commands::social;
 use game::player::Player;
-use mud::mudserver::MudServer;
+use mud::mudserver::Client;
 use rooms::room::Room;
 
-pub fn handle_command(id: &usize, mud: &mut MudServer, rooms: &HashMap<i32, Room>, command: &String, params: &String) {
+pub fn handle_command(id: &usize, client: &mut Client, command: &String, params: &String) {
+    let mut rooms: &HashMap<String, Room> = &HashMap::new();// = &mut mud.game.rooms;
     
-    if login::handle_login_command(id, mud, rooms, command, params) ||
+    /*if login::handle_login_command(id, mud, rooms, command, params) ||
         charactercreation::handle_command(id, mud, rooms, command, params) ||
         social::handle_social_command(id, mud, rooms, command, params) {
         return
-    }
+    }*/
     
 
     // 'help' command
     if command == "help" {
         // send the player back the list of possible commands
-        mud.send_message(*id, "Commands:".to_string());
+        //mud.send_message(*id, "Commands:".to_string());
+        client.send("Commands:".to_string());
         
-        mud.send_message(*id, "  look            - Describes the room that you are currently in, e.g. 'look'".to_string());
-        mud.send_message(*id, "  look <object>   - Attempt to examine a specific thing in the room you are in, e.g. 'look fireplace'".to_string());
-        mud.send_message(*id, "  go <exit>       - Moves through the exit specified, e.g. 'go outside'".to_string());
-        mud.send_message(*id, "  status          - Prints the current status of your character, e.g. 'status'".to_string());
-        mud.send_message(*id, "  inventory       - Prints the items and equipment you are carrying, e.g. 'inventory'".to_string());
-        mud.send_message(*id, "  say <message>   - Sends a message to everyone in the same room as the player , e.g. 'say Hello'".to_string());
-        mud.send_message(*id, "  shout <message> - Sends a message to every player online, e.g. 'shout Hello'".to_string());
-        mud.send_message(*id, "  whisper <name> <message> - Sends a private message to a specific player, e.g. 'whisper Kaladrel How is the adventure going?'".to_string());
-        mud.send_message(*id, "  emote <message> - Sends a message to everyone in the same room as you describing you character doing whatever the message is, e.g. 'emote waves'".to_string());
-        mud.send_message(*id, "  quit            - quit and exit the game, e.g. 'quit'".to_string());
+        client.send("  look            - Describes the room that you are currently in, e.g. 'look'".to_string());
+        client.send("  look <object>   - Attempt to examine a specific thing in the room you are in, e.g. 'look fireplace'".to_string());
+        client.send("  go <exit>       - Moves through the exit specified, e.g. 'go outside'".to_string());
+        client.send("  status          - Prints the current status of your character, e.g. 'status'".to_string());
+        client.send("  inventory       - Prints the items and equipment you are carrying, e.g. 'inventory'".to_string());
+        client.send("  say <message>   - Sends a message to everyone in the same room as the player , e.g. 'say Hello'".to_string());
+        client.send("  shout <message> - Sends a message to every player online, e.g. 'shout Hello'".to_string());
+        client.send("  whisper <name> <message> - Sends a private message to a specific player, e.g. 'whisper Kaladrel How is the adventure going?'".to_string());
+        client.send("  emote <message> - Sends a message to everyone in the same room as you describing you character doing whatever the message is, e.g. 'emote waves'".to_string());
+        client.send("  quit            - quit and exit the game, e.g. 'quit'".to_string());
     }
     // 'look' command
     /*elif command == "look" {
@@ -165,6 +167,6 @@ pub fn handle_command(id: &usize, mud: &mut MudServer, rooms: &HashMap<i32, Room
     // some other, unrecognised command
     else { 
         // send back an 'unknown command' message
-        mud.send_message(*id, format!("Unknown command '{}'", command));
+        client.send(format!("Unknown command '{}'", command));
     }
 }

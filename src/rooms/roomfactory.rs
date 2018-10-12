@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use rooms::room::Room;
 
 pub struct RoomFactory {
-    rooms: HashMap<i32, Room>
+    rooms: HashMap<String, Room>
 }
 
 impl RoomFactory {
@@ -17,8 +17,12 @@ impl RoomFactory {
         room_factory
     }
 
+    pub fn get_rooms(self) -> HashMap<String, Room> {
+        self.rooms
+    }
+
     fn create_rooms(&mut self) {
-        self.rooms.insert(0,
+        self.rooms.insert("Old Road".to_string(),
             Room {
                 name: "Old Road".to_string(),
                 description: "You're standing in the middle of an old worn road on the outskirts of Waterdeep, which stands before you to the north.".to_string(),

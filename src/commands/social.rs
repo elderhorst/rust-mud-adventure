@@ -4,7 +4,7 @@ use game::player::Player;
 use mud::mudserver::MudServer;
 use rooms::room::Room;
 
-pub fn handle_social_command(id: &usize, mud: &mut MudServer, rooms: &HashMap<i32, Room>, command: &String, params: &String) -> bool {
+pub fn handle_social_command(id: &usize, rooms: &HashMap<String, Room>, command: &String, params: &String) -> bool {
 
     // 'say' command
     if command == "say" {

@@ -2,7 +2,9 @@ use std::net::TcpStream;
 use std::io::prelude::*;
 use std::io::Write;
 
+use commands::commands;
 use game::player::Player;
+use mud::mudserver::MudServer;
 
 pub struct Client {
     id: usize,
@@ -40,11 +42,9 @@ impl Client {
         }
     }
 
-    fn process_input(&mut self, text:String) {
-        if text == "hello" {
-            println!("!!!!!!!!!!!!!!!");
-        }
+    fn process_input(&mut self, mut text: String) {
+        let params = text.split_off(7);
 
-        self.send(format!("text recived: {}", text));
+        commands::handle_command(&self.id, self, &text, &params);
     }
 }
