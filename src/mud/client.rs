@@ -45,6 +45,7 @@ impl Client {
     fn process_input(&mut self, mut text: String) {
         let params = text.split_off(7);
 
-        commands::handle_command(&self.id, self, &text, &params);
+
+        commands::handle_command(self, &text, &params);
     }
 }

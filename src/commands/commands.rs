@@ -4,10 +4,10 @@ use commands::charactercreation;
 use commands::login;
 use commands::social;
 use game::player::Player;
-use mud::mudserver::Client;
+use mud::client::Client;
 use rooms::room::Room;
 
-pub fn handle_command(id: &usize, client: &mut Client, command: &String, params: &String) {
+pub fn handle_command(client: &mut Client, command: &String, params: &String) {
     let mut rooms: &HashMap<String, Room> = &HashMap::new();// = &mut mud.game.rooms;
     
     /*if login::handle_login_command(id, mud, rooms, command, params) ||
