@@ -1,6 +1,7 @@
 use std::net::TcpStream;
 use std::vec::Vec;
 
+use commands::commands;
 use mud::client::Client;
 use mud::serverdata::ServerData;
 use mud::updatedata::UpdateData;
@@ -34,6 +35,10 @@ impl MudServer {
     }
 
     pub fn update(&mut self) {
-        let data = self.server_data.update_clients();
+        let client_data = self.server_data.update_clients();
+
+        for data in &client_data {
+            commands::handle_command(&data.id, &data.command, &data.params, &mut self.server_data);
+        }
     }
 }

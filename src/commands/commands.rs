@@ -5,9 +5,10 @@ use commands::login;
 use commands::social;
 use game::player::Player;
 use mud::client::Client;
+use mud::serverdata::ServerData;
 use rooms::room::Room;
 
-pub fn handle_command(client: &mut Client, command: &String, params: &String) {
+pub fn handle_command(id: &usize, command: &String, params: &String, server_data: &mut ServerData) {
     let mut rooms: &HashMap<String, Room> = &HashMap::new();// = &mut mud.game.rooms;
     
     /*if login::handle_login_command(id, mud, rooms, command, params) ||
@@ -21,18 +22,18 @@ pub fn handle_command(client: &mut Client, command: &String, params: &String) {
     if command == "help" {
         // send the player back the list of possible commands
         //mud.send_message(*id, "Commands:".to_string());
-        client.send("Commands:".to_string());
+        server_data.send(*id, "Commands:".to_string());
         
-        client.send("  look            - Describes the room that you are currently in, e.g. 'look'".to_string());
-        client.send("  look <object>   - Attempt to examine a specific thing in the room you are in, e.g. 'look fireplace'".to_string());
-        client.send("  go <exit>       - Moves through the exit specified, e.g. 'go outside'".to_string());
-        client.send("  status          - Prints the current status of your character, e.g. 'status'".to_string());
-        client.send("  inventory       - Prints the items and equipment you are carrying, e.g. 'inventory'".to_string());
-        client.send("  say <message>   - Sends a message to everyone in the same room as the player , e.g. 'say Hello'".to_string());
-        client.send("  shout <message> - Sends a message to every player online, e.g. 'shout Hello'".to_string());
-        client.send("  whisper <name> <message> - Sends a private message to a specific player, e.g. 'whisper Kaladrel How is the adventure going?'".to_string());
-        client.send("  emote <message> - Sends a message to everyone in the same room as you describing you character doing whatever the message is, e.g. 'emote waves'".to_string());
-        client.send("  quit            - quit and exit the game, e.g. 'quit'".to_string());
+        server_data.send(*id, "  look            - Describes the room that you are currently in, e.g. 'look'".to_string());
+        server_data.send(*id, "  look <object>   - Attempt to examine a specific thing in the room you are in, e.g. 'look fireplace'".to_string());
+        server_data.send(*id, "  go <exit>       - Moves through the exit specified, e.g. 'go outside'".to_string());
+        server_data.send(*id, "  status          - Prints the current status of your character, e.g. 'status'".to_string());
+        server_data.send(*id, "  inventory       - Prints the items and equipment you are carrying, e.g. 'inventory'".to_string());
+        server_data.send(*id, "  say <message>   - Sends a message to everyone in the same room as the player , e.g. 'say Hello'".to_string());
+        server_data.send(*id, "  shout <message> - Sends a message to every player online, e.g. 'shout Hello'".to_string());
+        server_data.send(*id, "  whisper <name> <message> - Sends a private message to a specific player, e.g. 'whisper Kaladrel How is the adventure going?'".to_string());
+        server_data.send(*id, "  emote <message> - Sends a message to everyone in the same room as you describing you character doing whatever the message is, e.g. 'emote waves'".to_string());
+        server_data.send(*id, "  quit            - quit and exit the game, e.g. 'quit'".to_string());
     }
     // 'look' command
     /*elif command == "look" {
@@ -167,6 +168,6 @@ pub fn handle_command(client: &mut Client, command: &String, params: &String) {
     // some other, unrecognised command
     else { 
         // send back an 'unknown command' message
-        client.send(format!("Unknown command '{}'", command));
+        server_data.send(*id, format!("Unknown command '{}'", command));
     }
 }

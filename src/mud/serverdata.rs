@@ -21,9 +21,16 @@ impl ServerData {
 
         for id in 0..self.clients.len() {
             let mut client_data = self.clients[id].update();
-            data.push(client_data);
+
+            if client_data.command.len() != 0 {
+                data.push(client_data);
+            }
         }
 
         data
+    }
+
+    pub fn send(&mut self, id: usize, text: String) {
+        self.clients[id].send(text);
     }
 }

@@ -2,7 +2,6 @@ use std::net::TcpStream;
 use std::io::prelude::*;
 use std::io::Write;
 
-use commands::commands;
 use game::player::Player;
 use mud::updatedata::UpdateData;
 
@@ -22,7 +21,7 @@ impl Client {
     }
 
     pub fn send(&mut self, text: String) {
-        let response = format!("{}\n", text);
+        let response = format!("{}\n", text.trim());
         self.stream.write(response.as_bytes()).expect("Response failed");
     }
 
@@ -32,7 +31,7 @@ impl Client {
         buffer = buffer.trim().to_string();
 
         if buffer.len() != 0 {
-            return self.process_input(buffer);
+            return self.process_input(&buffer);
         }
         else {
             return UpdateData {
@@ -49,18 +48,33 @@ impl Client {
         }*/
     }
 
-    fn process_input(&mut self, mut text: String) -> UpdateData {
+    fn process_input(&mut self, mut text: &String) -> UpdateData {
+        let command_length = self.get_command_length(text);
+        let command = &text[0..command_length];
+        let mut params = "";
+
+        if command_length < text.len() - 1 {
+            params = &text[command_length + 1..text.len()];
+        }
+
         let data = UpdateData {
             id: self.id.clone(),
-            command: "help".to_string(),
-            params: "".to_string(),
+            command: command.to_string(),
+            params: params.to_string(),
         };
-        
-        let params = "".to_string();//text.split_off(7);
-
-        // TODO: MOVE THIS
-        commands::handle_command(self, &text, &params);
 
         return data;
+    }
+
+    fn get_command_length(&self, s: &String) -> usize {
+        let bytes = s.as_bytes();
+
+        for (i, &item) in bytes.iter().enumerate() {
+            if item == b' ' {
+                return i;
+            }
+        }
+
+        return s.len();
     }
 }
