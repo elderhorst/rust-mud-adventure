@@ -8,7 +8,7 @@ use mud::updatedata::UpdateData;
 pub struct Client {
     id: usize,
     pub stream: TcpStream,
-    player: Player,
+    pub player: Player,
 }
 
 impl Client {

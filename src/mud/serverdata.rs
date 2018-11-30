@@ -1,14 +1,18 @@
+use game::player::Player;
 use mud::client::Client;
 use mud::updatedata::UpdateData;
+use mud::database::Database;
 
 pub struct ServerData {
     pub clients: Vec<Client>,
+    pub database: Database,
 }
 
 impl ServerData {
     pub fn new() -> ServerData {
         ServerData {
             clients: Vec::new(),
+            database: Database::new(),
         }
     }
 
@@ -32,5 +36,15 @@ impl ServerData {
 
     pub fn send(&mut self, id: usize, text: String) {
         self.clients[id].send(text);
+    }
+
+    pub fn get_players(&mut self) -> &mut Vec<Player> {
+        let &mut players = Vec::new();
+
+        for client in self.clients.iter() {
+            players.push(client.player);
+        }
+
+        players
     }
 }

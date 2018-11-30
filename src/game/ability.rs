@@ -5,6 +5,12 @@ pub struct Ability {
     pub modifier: i32,
 }
 
+impl Ability {
+    pub fn set_value(&mut self, value: i32) {
+        self.value = value;
+    }
+}
+
 pub struct Abilities {
     pub strength: Ability,
     pub dexterity: Ability,
@@ -54,6 +60,19 @@ impl Abilities {
                 modifier: 0,
             },
         }
+    }
+
+    pub fn remake(ste: i32, dex: i32, con: i32, int: i32, wis: i32, cha: i32) -> Abilities {
+        let abilities = Abilities::new();
+
+        abilities.strength.set_value(ste);
+        abilities.dexterity.set_value(dex);
+        abilities.constitution.set_value(con);
+        abilities.intelligence.set_value(int);
+        abilities.wisdom.set_value(wis);
+        abilities.charisma.set_value(cha);
+
+        abilities
     }
 
     fn get_modifier(value: &i32) -> i32 {

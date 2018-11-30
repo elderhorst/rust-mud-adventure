@@ -1,102 +1,119 @@
 use std::collections::HashMap;
 
+use game::game::Game;
 use game::player::Player;
-use mud::mudserver::MudServer;
+use mud::serverdata::ServerData;
 use rooms::room::Room;
 
-pub fn handle_command(id: &usize, rooms: &HashMap<String, Room>, command: &String, params: &String) -> bool {
-    /*# if the player hasn't given their name yet, use this first command as
-    # their name and move them to the starting room.
-    if players[id].name is "":
+pub fn handle_command(id: &usize, command: &String, params: &String, server_data: &mut ServerData, game: &mut Game) -> bool {
+    let players = server_data.get_players();
 
-        name = command.strip()
+    // if the player hasn't given their name yet, use this first command as
+    // their name and move them to the starting room.
+    if players[*id].name == "" {
 
-        if name == "":
-            mud.send_message(id, "Invalid name entered")
-            return True
+        let name: String = command.trim().to_string();
 
-        elif does_name_exist(name):
-            mud.send_message(id, "A character already has that name")
-            return True
+        if name == "" {
+            server_data.send(*id, "Invalid name entered".to_string());
+            return true;
+        }
+        else if server_data.database.does_player_exist(&name) {
+            server_data.send(*id, "A character already has that name".to_string());
+            return true;
+        }
 
-        players[id].name = name
-        
-        mud.send_message(id, "Enter a password:")
+        players[*id].name = name;
 
-    elif players[id].password is "":
+        server_data.send(*id, "Enter a password:".to_string());
+    }
+    else if players[*id].password == "" {
+        let hash = command;//TODO: bcrypt.hashpw(command.encode("utf-8"), salt);
 
-        hash = bcrypt.hashpw(command.encode('utf-8'), salt)
+        players[*id].password = *hash;
 
-        players[id].password = hash
+        server_data.send(*id, "Enter password again to confirm".to_string());
+    }
+    else if players[*id].status.confirmed_password == false {
+        // TODO
+        /*if bcrypt.checkpw(command.encode("utf-8"), players[id].password) == false {
+            mud.send_message(id, "Password not the same, please try again");
 
-        mud.send_message(id, "Enter password again to confirm")
+            return true;
+        }*/
+        // TEMPORARY
+        if command != players[*id].password {
+            server_data.send(*id, "Password not the same, please try again".to_string());
 
-    elif players[id].status.confirmed_password is False:
+            return true;
+        }
 
-        if bcrypt.checkpw(command.encode('utf-8'), players[id].password) is False:
-            mud.send_message(id, "Password not the same, please try again")
+        players[*id].status.confirmed_password = true;
 
-            return True
+        server_data.send(*id, get_race_selection_message());
+    }
+    else if players[*id].status.confirmed_password && players[*id].status.confirmed_race == false {
+        if command.find("help") != None {
+            let race_name = params.lower();
+            let mut message = "Race not found".to_string();
 
-        players[id].status.confirmed_password = True
+            for (_key, race) in game.races {
+                if race.name.lower() == race_name {
+                    message = race.description;
+                    break;
+                }
+            }
 
-        mud.send_message(id, get_race_selection_message())
+            server_data.send(*id, message);
+        }
+        else {
+            let mut selected_race = None;
 
-    elif players[id].status.confirmed_password and players[id].status.confirmed_race is False:
+            for (_key, race) in game.races {
+                if race.name.lower() == command.lower() {
+                    selected_race = race;
+                    break;
+                }
+            }
 
-        if command.find("help") != -1:
-            race_name = params.lower()
-            message = "Race not found"
+            if selected_race == None {
+                 return false;
+            }
 
-            for race in races:
-                if race.name.lower() == race_name:
-                    message = race.description
-                    break
+            players[*id].race = selected_race;
+            players[*id].status.logged_in = true;
 
-            mud.send_message(id, message)
+            server_data.send(*id, "Character created successfully!".to_string());
 
-        else:
-            selected_race = None
+            // go through all the players in the game
+            // TODO
+            /*
+            for (pid, _pl) in players.items() {
+                // send each player a message to tell them about the new player
+                server_data.send(*pid, "{} entered the game".format(players[id].name));
+            }*/
 
-            for race in races:
-                if race.name.lower() == command.lower():
-                    selected_race = race
-                    break
+            // send the new player a welcome message
+            server_data.send(*id, "Welcome to the game, {}. ".format(
+                                                            players[*id].name)
+                                + "Type 'help' for a list of commands. Have fun!");
 
-            if selected_race is None:
-                 return False
+            players[*id].room = "Old Road".to_string();
 
-            players[id].race = selected_race
-            players[id].status.logged_in = True
+            // send the new player the description of their current room
+            server_data.send(*id, game.rooms[players[*id].room].description);
 
-            mud.send_message(id, "Character created successfully!")
+            server_data.database.add_player(&players[*id]);
 
-            # go through all the players in the game
-            for pid, _pl in players.items():
-                # send each player a message to tell them about the new player
-                mud.send_message(pid, "{} entered the game".format(players[id].name))
+            // log that a user logged in
+            //println!("{}: User '{}' created character".format("some time", id.to_string()));
+        }
+    }
+    else {
+        return false;
+    }
 
-            # send the new player a welcome message
-            mud.send_message(id, "Welcome to the game, {}. ".format(
-                                                            players[id].name)
-                                + "Type 'help' for a list of commands. Have fun!")
-
-            players[id].room = "Old Road"
-
-            # send the new player the description of their current room
-            mud.send_message(id, rooms[players[id].room]["description"])
-
-            add_player(players[id])
-
-            # log that a user logged in
-            print("{}: User '{}' created character".format(time.asctime(), id))
-    
-    else:
-        return False
-
-    return True*/
-
-    return false
+    return true;
 }
 
 fn get_race_selection_message() -> String {
