@@ -7,6 +7,17 @@ pub struct Race {
     pub bonuses: HashMap<String, i32>,
 }
 
+impl Race {
+    pub fn empty() -> Race {
+        Race {
+            name: "".to_string(),
+            plural: "".to_string(),
+            description: "".to_string(),
+            bonuses: HashMap::new(),
+        }
+    }
+}
+
 pub struct RaceFactory {
     races: HashMap<String, Race>
 }

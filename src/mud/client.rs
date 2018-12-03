@@ -48,7 +48,7 @@ impl Client {
         }*/
     }
 
-    fn process_input(&mut self, mut text: &String) -> UpdateData {
+    fn process_input(&mut self, text: &String) -> UpdateData {
         let command_length = self.get_command_length(text);
         let command = &text[0..command_length];
         let mut params = "";

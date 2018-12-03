@@ -1,22 +1,22 @@
 use std::collections::HashMap;
 
 use commands::charactercreation;
-use commands::login;
-use commands::social;
+//use commands::login;
+//use commands::social;
 use game::game::Game;
-use game::player::Player;
-use mud::client::Client;
+//use game::player::Player;
+//use mud::client::Client;
 use mud::serverdata::ServerData;
 use rooms::room::Room;
 
 pub fn handle_command(id: &usize, command: &String, params: &String, server_data: &mut ServerData, game: &mut Game) {
-    let mut rooms: &HashMap<String, Room> = &HashMap::new();// = &mut mud.game.rooms;
+    let rooms: &HashMap<String, Room> = &HashMap::new();// = &mut mud.game.rooms;
     
-    /*if login::handle_login_command(id, mud, rooms, command, params) ||
-        charactercreation::handle_command(id, mud, rooms, command, params) ||
-        social::handle_social_command(id, mud, rooms, command, params) {
+    if /*login::handle_login_command(id, mud, rooms, command, params) ||*/
+        charactercreation::handle_command(&id, &command, &params, server_data, game)/* ||
+        social::handle_social_command(id, mud, rooms, command, params) */{
         return
-    }*/
+    }
     
 
     // 'help' command

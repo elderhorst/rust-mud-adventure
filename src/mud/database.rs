@@ -1,9 +1,10 @@
-use mud::rusqlite::types::ToSql;
-use mud::rusqlite::{Connection, MappedRows, NO_PARAMS};
+//use mud::rusqlite::types::ToSql;
+use mud::rusqlite::{Connection, /*MappedRows,*/ NO_PARAMS};
 use std::path::Path;
 
 use game::ability::Abilities;
 use game::player::Player;
+use game::player::Status;
 
 pub struct Database {
     conn: Connection,
@@ -57,6 +58,7 @@ impl Database {
                 max_health: row.get(11),
                 level: row.get(12),
                 inventory: row.get(13),
+                status: Status::new(),
             }).unwrap();
 
         let mut players = Vec::new();
@@ -90,7 +92,8 @@ impl Database {
         let players = self.get_data_iter(&command);
 
         if players.len() == 1 {
-            player = &players[0];
+            //player = &players[0];
+            //TODO
         }
     }
 }

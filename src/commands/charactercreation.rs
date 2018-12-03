@@ -1,21 +1,26 @@
-use std::collections::HashMap;
+//use std::collections::HashMap;
 
 use game::game::Game;
-use game::player::Player;
+//use game::race::Race;
+//use game::player::Player;
 use mud::serverdata::ServerData;
-use rooms::room::Room;
+//use rooms::room::Room;
 
 pub fn handle_command(id: &usize, command: &String, params: &String, server_data: &mut ServerData, game: &mut Game) -> bool {
-    let players = server_data.get_players();
+    //let players = server_data.get_players();
+
+    server_data.send(*id, "Invalid name entered".to_string());
+
+    server_data.send(*id, "Invalid name entered".to_string());
 
     // if the player hasn't given their name yet, use this first command as
     // their name and move them to the starting room.
-    if players[*id].name == "" {
+    /*if players[*id].name == "" {
 
         let name: String = command.trim().to_string();
 
         if name == "" {
-            server_data.send(*id, "Invalid name entered".to_string());
+            //server_data.send(*id, "Invalid name entered".to_string());
             return true;
         }
         else if server_data.database.does_player_exist(&name) {
@@ -28,9 +33,9 @@ pub fn handle_command(id: &usize, command: &String, params: &String, server_data
         server_data.send(*id, "Enter a password:".to_string());
     }
     else if players[*id].password == "" {
-        let hash = command;//TODO: bcrypt.hashpw(command.encode("utf-8"), salt);
+        let hash = command.clone();//TODO: bcrypt.hashpw(command.encode("utf-8"), salt);
 
-        players[*id].password = *hash;
+        players[*id].password = hash;
 
         server_data.send(*id, "Enter password again to confirm".to_string());
     }
@@ -42,7 +47,7 @@ pub fn handle_command(id: &usize, command: &String, params: &String, server_data
             return true;
         }*/
         // TEMPORARY
-        if command != players[*id].password {
+        if *command != players[*id].password {
             server_data.send(*id, "Password not the same, please try again".to_string());
 
             return true;
@@ -54,12 +59,12 @@ pub fn handle_command(id: &usize, command: &String, params: &String, server_data
     }
     else if players[*id].status.confirmed_password && players[*id].status.confirmed_race == false {
         if command.find("help") != None {
-            let race_name = params.lower();
+            let race_name = params.to_lowercase();
             let mut message = "Race not found".to_string();
 
-            for (_key, race) in game.races {
-                if race.name.lower() == race_name {
-                    message = race.description;
+            for (_key, race) in game.races.iter() {
+                if race.name.to_lowercase() == race_name {
+                    message = race.description.clone();
                     break;
                 }
             }
@@ -67,20 +72,26 @@ pub fn handle_command(id: &usize, command: &String, params: &String, server_data
             server_data.send(*id, message);
         }
         else {
-            let mut selected_race = None;
+            let mut selected_race: Race = Race::empty();
 
-            for (_key, race) in game.races {
-                if race.name.lower() == command.lower() {
-                    selected_race = race;
+            for (_key, race) in game.races.iter() {
+                if race.name.to_lowercase() == command.to_lowercase() {
+                    selected_race = Race {
+                        name: race.name.clone(),
+                        plural: race.plural.clone(),
+                        description: race.description.clone(),
+                        bonuses: race.bonuses.clone(),
+                    };
                     break;
                 }
             }
 
-            if selected_race == None {
+            // TODO
+            /*if selected_race == None {
                  return false;
-            }
+            }*/
 
-            players[*id].race = selected_race;
+            players[*id].race = selected_race.name;
             players[*id].status.logged_in = true;
 
             server_data.send(*id, "Character created successfully!".to_string());
@@ -94,14 +105,13 @@ pub fn handle_command(id: &usize, command: &String, params: &String, server_data
             }*/
 
             // send the new player a welcome message
-            server_data.send(*id, "Welcome to the game, {}. ".format(
-                                                            players[*id].name)
-                                + "Type 'help' for a list of commands. Have fun!");
+            server_data.send(*id, format!("Welcome to the game, {}. Type 'help' for a list of commands. Have fun!", players[*id].name));
 
             players[*id].room = "Old Road".to_string();
 
             // send the new player the description of their current room
-            server_data.send(*id, game.rooms[players[*id].room].description);
+            //TODO:
+            //server_data.send(*id, game.rooms[&players[*id].room].description);
 
             server_data.database.add_player(&players[*id]);
 
@@ -111,7 +121,7 @@ pub fn handle_command(id: &usize, command: &String, params: &String, server_data
     }
     else {
         return false;
-    }
+    }*/
 
     return true;
 }

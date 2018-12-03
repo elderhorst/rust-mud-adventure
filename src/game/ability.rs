@@ -63,7 +63,7 @@ impl Abilities {
     }
 
     pub fn remake(ste: i32, dex: i32, con: i32, int: i32, wis: i32, cha: i32) -> Abilities {
-        let abilities = Abilities::new();
+        let mut abilities = Abilities::new();
 
         abilities.strength.set_value(ste);
         abilities.dexterity.set_value(dex);

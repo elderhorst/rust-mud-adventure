@@ -10,6 +10,7 @@ pub struct Player {
     pub max_health: i32,
     pub level: i32,
     pub inventory: String,
+    pub status: Status,
 }
 
 impl Player {
@@ -24,18 +25,33 @@ impl Player {
             max_health: 1,
             level: 1,
             inventory: "".to_string(),
+            status: Status::new(),
         }
     }
 }
 
 pub struct Status {
-
+    pub main_menu: bool,
+    pub logging_in: bool,
+    pub confirmed_name: bool,
+    pub creating_character: bool,
+    pub confirmed_password: bool,
+    pub confirmed_race: bool,
+    pub confirmed_class: bool,
+    pub logged_in: bool,
 }
 
 impl Status {
     pub fn new() -> Status {
         Status {
-
+            main_menu: true,
+            logging_in: false,
+            confirmed_name: false,
+            creating_character: false,
+            confirmed_password: false,
+            confirmed_race: false,
+            confirmed_class: false,
+            logged_in: false,
         }
     }
 }

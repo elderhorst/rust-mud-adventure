@@ -1,4 +1,4 @@
-use game::player::Player;
+//use game::player::Player;
 use mud::client::Client;
 use mud::updatedata::UpdateData;
 use mud::database::Database;
@@ -37,14 +37,14 @@ impl ServerData {
     pub fn send(&mut self, id: usize, text: String) {
         self.clients[id].send(text);
     }
-
+    /* TODO
     pub fn get_players(&mut self) -> &mut Vec<Player> {
-        let &mut players = Vec::new();
+        let mut players = Vec::new();
 
         for client in self.clients.iter() {
             players.push(client.player);
         }
 
-        players
-    }
+        &mut players
+    }*/
 }

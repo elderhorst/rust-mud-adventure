@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
-use game::player::Player;
-use mud::mudserver::MudServer;
+//use game::player::Player;
+//use mud::mudserver::MudServer;
 use rooms::room::Room;
 
 pub fn handle_social_command(id: &usize, rooms: &HashMap<String, Room>, command: &String, params: &String) -> bool {
