@@ -2,21 +2,18 @@ use std::net::TcpStream;
 use std::io::prelude::*;
 use std::io::Write;
 
-use game::player::Player;
 use mud::updatedata::UpdateData;
 
 pub struct Client {
     id: usize,
     pub stream: TcpStream,
-    pub player: Player,
 }
 
 impl Client {
-    pub fn new(id: usize, stream: TcpStream) -> Client{
+    pub fn new(id: usize, stream: TcpStream) -> Client {
         Client {
             id: id,
             stream: stream,
-            player: Player::new(),
         }
     }
 
@@ -27,7 +24,7 @@ impl Client {
 
     pub fn update(&mut self) -> UpdateData {
         let mut buffer = String::new();
-        let result = self.stream.read_to_string(&mut buffer);
+        let _result = self.stream.read_to_string(&mut buffer);
         buffer = buffer.trim().to_string();
 
         if buffer.len() != 0 {
