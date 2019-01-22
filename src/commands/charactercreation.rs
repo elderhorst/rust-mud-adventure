@@ -1,80 +1,75 @@
-//use std::collections::HashMap;
-
+use commands::status::CommandStatus;
 use game::game::Game;
-//use game::race::Race;
-//use game::player::Player;
-//use rooms::room::Room;
+use game::race::Race;
 
 impl Game {
-    pub fn handle_cc_command(&mut self, id: &usize, command: &String, params: &String) -> bool {
-        /*let mut players = self.get_players();
-
-        self.send(*id, "Invalid name entered".to_string());
-
-        self.send(*id, "Invalid name entered".to_string());
-
+    pub fn handle_cc_command(&mut self, id: &usize, command: &String, params: &String) -> CommandStatus {
+        let mut status = CommandStatus::new();
         // if the player hasn't given their name yet, use this first command as
         // their name and move them to the starting room.
-        if players[*id].name == "" {
+        if self.players.get(&id).unwrap().name == "" {
 
             let name: String = command.trim().to_string();
 
             if name == "" {
-                //server_data.send(*id, "Invalid name entered".to_string());
-                return true;
+                status.queue(*id, "Invalid name entered".to_string());
+                status.handled = true;
+                return status;
             }
             else if self.database.does_player_exist(&name) {
-                self.send(*id, "A character already has that name".to_string());
-                return true;
+                status.queue(*id, "A character already has that name".to_string());
+                status.handled = true;
+                return status;
             }
 
-            players[*id].name = name;
+            self.players.get_mut(&id).unwrap().name = name;
 
-            self.send(*id, "Enter a password:".to_string());
-        }*/
-        /*else if players[*id].password == "" {
+            status.queue(*id, "Enter a password:".to_string());
+        }
+        else if self.players.get(&id).unwrap().password == "" {
             let hash = command.clone();//TODO: bcrypt.hashpw(command.encode("utf-8"), salt);
 
-            players[*id].password = hash;
+            self.players.get_mut(&id).unwrap().password = hash;
 
-            server_data.send(*id, "Enter password again to confirm".to_string());
+            status.queue(*id, "Enter password again to confirm".to_string());
         }
-        else if players[*id].status.confirmed_password == false {
+        else if self.players.get(&id).unwrap().status.confirmed_password == false {
             // TODO
             /*if bcrypt.checkpw(command.encode("utf-8"), players[id].password) == false {
-                mud.send_message(id, "Password not the same, please try again");
+                self.send(id, "Password not the same, please try again");
 
                 return true;
             }*/
             // TEMPORARY
-            if *command != players[*id].password {
-                server_data.send(*id, "Password not the same, please try again".to_string());
+            if *command != self.players.get(&id).unwrap().password {
+                status.queue(*id, "Password not the same, please try again".to_string());
 
-                return true;
+                status.handled = true;
+                return status;
             }
 
-            players[*id].status.confirmed_password = true;
-
-            server_data.send(*id, get_race_selection_message());
+            self.players.get_mut(&id).unwrap().status.confirmed_password = true;
+            let text = self.get_race_selection_message();
+            status.queue(*id, text);
         }
-        else if players[*id].status.confirmed_password && players[*id].status.confirmed_race == false {
+        else if self.players.get(&id).unwrap().status.confirmed_password && self.players.get(&id).unwrap().status.confirmed_race == false {
             if command.find("help") != None {
                 let race_name = params.to_lowercase();
                 let mut message = "Race not found".to_string();
 
-                for (_key, race) in game.races.iter() {
+                for (_key, race) in self.races.iter() {
                     if race.name.to_lowercase() == race_name {
                         message = race.description.clone();
                         break;
                     }
                 }
 
-                server_data.send(*id, message);
+                status.queue(*id, message);
             }
             else {
                 let mut selected_race: Race = Race::empty();
 
-                for (_key, race) in game.races.iter() {
+                for (_key, race) in self.races.iter() {
                     if race.name.to_lowercase() == command.to_lowercase() {
                         selected_race = Race {
                             name: race.name.clone(),
@@ -91,10 +86,10 @@ impl Game {
                     return false;
                 }*/
 
-                players[*id].race = selected_race.name;
-                players[*id].status.logged_in = true;
+                self.players.get_mut(&id).unwrap().race = selected_race.name;
+                self.players.get_mut(&id).unwrap().status.logged_in = true;
 
-                server_data.send(*id, "Character created successfully!".to_string());
+                status.queue(*id, "Character created successfully!".to_string());
 
                 // go through all the players in the game
                 // TODO
@@ -105,41 +100,46 @@ impl Game {
                 }*/
 
                 // send the new player a welcome message
-                server_data.send(*id, format!("Welcome to the game, {}. Type 'help' for a list of commands. Have fun!", players[*id].name));
+                status.queue(*id, format!("Welcome to the game, {}. Type 'help' for a list of commands. Have fun!", self.players.get(&id).unwrap().name));
 
-                players[*id].room = "Old Road".to_string();
+                self.players.get_mut(&id).unwrap().room = "Old Road".to_string();
 
                 // send the new player the description of their current room
-                //TODO:
-                //server_data.send(*id, game.rooms[&players[*id].room].description);
+                let room_name = self.players.get(&id).unwrap().name.to_string();
+                let description = self.rooms.get_mut(&room_name).unwrap().description.to_string();
+                status.queue(*id, description.to_string());
 
-                server_data.database.add_player(&players[*id]);
+                self.database.add_player(&self.players.get(&id).unwrap());
 
                 // log that a user logged in
                 //println!("{}: User '{}' created character".format("some time", id.to_string()));
             }
         }
         else {
-            return false;
-        }*/
+            status.handled = false;
+            return status;
+        }
 
-        return true;
+        status.handled = true;
+        return status;
     }
 
-    fn get_race_selection_message() -> String {
-        let message = "".to_string();
-        /*let mut count = 0;
+    fn get_race_selection_message(&self) -> String {
+        let mut message = "".to_string();
+        let mut count = 0;
 
-        for race in races:
-            message += race.name + "    "
+        for (_key, race) in self.races.iter() {
+            message += &format!("{}    ", race.name);
 
-            if count % 4 == 0 and count != 0:
-                message += '\n'
+            if count % 4 == 0 && count != 0 {
+                message += &'\n'.to_string();
+            }
 
-            count += 1
+            count += 1;
+        }
 
-        message += "\nFor more info on a race, type 'help <race>', e.g. 'help human'"
-        */
+        message += &"\nFor more info on a race, type 'help <race>', e.g. 'help human'".to_string();
+        
         message
     }
 }

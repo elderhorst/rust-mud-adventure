@@ -54,7 +54,6 @@ impl Game {
     }
 
     pub fn send(&mut self, id: usize, text: String) {
-        let client = self.clients.get_mut(&id).unwrap();
-        client.send(text);
+        self.clients.get_mut(&id).unwrap().send(text);
     }
 }

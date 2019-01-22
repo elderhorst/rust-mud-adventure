@@ -3,6 +3,7 @@
 //use commands::charactercreation;
 //use commands::login;
 //use commands::social;
+use commands::status::CommandStatus;
 use game::game::Game;
 //use game::player::Player;
 //use mud::client::Client;
@@ -10,17 +11,21 @@ use game::game::Game;
 
 impl Game {
     pub fn handle_command(&mut self, id: &usize, command: &String, params: &String) {
+        let mut status: CommandStatus = self.handle_cc_command(&id, &command, &params);
         
         if /*login::handle_login_command(id, mud, rooms, command, params) ||*/
-            self.handle_cc_command(&id, &command, &params)/* ||
-            social::handle_social_command(id, mud, rooms, command, params) */{
+            /* ||
+            social::handle_social_command(id, mud, rooms, command, params) */
+            status.handled {
+
+            status.send_messages(&mut self.clients);
             return
         }
 
         // 'help' command
         if command == "help" {
             // send the player back the list of possible commands
-            //mud.send_message(*id, "Commands:".to_string());
+            self.send(*id, "Commands:".to_string());
             self.send(*id, "Commands:".to_string());
             
             self.send(*id, "  look            - Describes the room that you are currently in, e.g. 'look'".to_string());
@@ -169,5 +174,7 @@ impl Game {
             // send back an 'unknown command' message
             self.send(*id, format!("Unknown command '{}'", command));
         }
+
+        status.send_messages(&mut self.clients);
     }
 }
