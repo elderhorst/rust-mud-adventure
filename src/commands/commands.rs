@@ -12,11 +12,16 @@ use game::game::Game;
 impl Game {
     pub fn handle_command(&mut self, id: &usize, command: &String, params: &String) {
         let mut status: CommandStatus = self.handle_cc_command(&id, &command, &params);
+
+        if !status.handled {
+            status = self.handle_social_command(&id, &command, &params);
+        }
+
+        if !status.handled {
+            status = self.handle_login_command(&id, &command, &params);
+        }
         
-        if /*login::handle_login_command(id, mud, rooms, command, params) ||*/
-            /* ||
-            social::handle_social_command(id, mud, rooms, command, params) */
-            status.handled {
+        if status.handled {
 
             status.send_messages(&mut self.clients);
             return
