@@ -8,7 +8,6 @@ impl Game {
         // if the player hasn't given their name yet, use this first command as
         // their name and move them to the starting room.
         if self.players.get(&id).unwrap().name == "" {
-
             let name: String = command.trim().to_string();
 
             if name == "" {

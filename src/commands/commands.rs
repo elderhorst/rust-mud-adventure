@@ -45,48 +45,66 @@ impl Game {
             self.send(*id, "  quit            - quit and exit the game, e.g. 'quit'".to_string());
         }
         // 'look' command
-        /*elif command == "look" {
+        else if command == "look" {
 
-            # store the player's current room
-            rm = rooms[players[id].room]
+            // store the player's current room
+            let room_name = self.players.get(&id).unwrap().room.clone();
 
-            item = None
-            for room_item in rm["items"]:
-                if room_item.item.name.lower() == params.lower():
-                    item = room_item.item
-                    break
+            // TODO: looking at items
+            //let item = null;
 
-            # either the player is looking at a specific object, or the whole room
-            if params in rm["features"]:
-                mud.send_message(id, rm["features"][params])
+            // either the player is looking at a specific object, or the whole room
+            if self.rooms.get(&room_name).unwrap().features.contains_key(params) {
+                let feature: String = self.rooms.get(&room_name).unwrap().features[params].clone();
+                self.send(*id, feature.to_string());
+            }
+            /*else if item != None {
+                self.send(*id, "Not yet implemented".to_string());
+            }*/
+            else {
+                // send the player back the description of their current room
+                let description: String = self.rooms.get(&room_name).unwrap().description.clone();
+                self.send(*id, description.to_string());
 
-            elif item != None:
-                mud.send_message(id, item.description)
+                let mut players_here = Vec::new();
+                // go through every player in the game
+                let mut message: String = "".to_string();
+                for (_pid, pl) in self.players.iter() {
+                    // if they're in the same room as the player
+                    if pl.room == room_name {
+                        // ...and they have a name to be shown
+                        if pl.name != "" {
+                            // add their name to the list
+                            players_here.push(pl.name.clone());
 
-            else:
-                # send the player back the description of their current room
-                mud.send_message(id, rm["description"])
+                            // send player a message containing the list of players in the room
+                            message += &"Players here:\n".to_string();
 
-                playershere = []
-                # go through every player in the game
-                for pid, _pl in players.items():
-                    # if they're in the same room as the player
-                    if players[pid].room == players[id].room:
-                        # ... and they have a name to be shown
-                        if players[pid].name is not None:
-                            # add their name to the list
-                            playershere.append(players[pid].name)
+                            if players_here.len() != 0 {
+                                for player_here in players_here.iter() {
+                                    message += player_here;
+                                    message += &"\n".to_string();
+                                }
+                            }
+                            else {
+                                message += &"None\n".to_string();
+                            }
+                        }
+                    }
+                }
 
-                # send player a message containing the list of players in the room
-                mud.send_message(id, "Players here: {}".format(
-                                                        ", ".join(playershere)))
+                // send player a message containing the list of exits from this room
+                message += &"Exits are:\n".to_string();
+                for (name, _) in self.rooms.get(&room_name).unwrap().exits.iter() {
+                    message += name;
+                    message += &"\n".to_string();
+                }
 
-                # send player a message containing the list of exits from this room
-                mud.send_message(id, "Exits are: {}".format(
-                                                        ", ".join(rm["exits"])))
+                self.send(*id, message.to_string());
+            }
         }
         // 'go' command
-        elif command == "go" {
+        /*elif command == "go" {
 
             # store the exit name
             ex = params.lower()
