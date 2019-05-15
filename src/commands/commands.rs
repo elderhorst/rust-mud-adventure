@@ -104,94 +104,82 @@ impl Game {
             }
         }
         // 'go' command
-        /*elif command == "go" {
+        else if command == "go" {
+            let ex = params.to_lowercase();
+            let room_name = self.players.get(&id).unwrap().room.clone();
 
-            # store the exit name
-            ex = params.lower()
+            if self.rooms.get(&room_name).unwrap().exits.contains_key(&ex) {
+                for (pid, pl) in self.players.iter() {
+                    if pid != id && pl.room == self.players.get(&id).unwrap().room {
+                        self.send(*pid, format!("{} left via exit '{}'", self.players[id].name, ex).to_string());
+                    }
+                }
 
-            # store the player's current room
-            rm = rooms[players[id].room]
+                self.players.get(&id).unwrap().room = room_name;
 
-            # if the specified exit is found in the room's exits list
-            if ex in rm["exits"]:
+                for (pid, pl) in self.players.iter() {
+                    if pid != id && pl.room == self.players.get(&id).unwrap().room {
+                        self.send(*pid, format!("{} arrived via exit '{}'", self.players[id].name, ex).to_string());
+                    }
+                }
 
-                # go through all the players in the game
-                for pid, _pl in players.items():
-                    # if player is in the same room and isn't the player
-                    # sending the command
-                    if players[pid].room == players[id].room \
-                            and pid != id:
-                        # send them a message telling them that the player
-                        # left the room
-                        mud.send_message(pid, "{} left via exit '{}'".format(
-                                                        players[id].name, ex))
+                status.queue(*id, format!("You arrive at '{}'", room_name));
 
-                # update the player's current room to the one the exit leads to
-                players[id].room = rm["exits"][ex]
-                rm = rooms[players[id].room]
-
-                # go through all the players in the game
-                for pid, _pl in players.items():
-                    # if player is in the same (new) room and isn't the player
-                    # sending the command
-                    if players[pid].room == players[id].room \
-                            and pid != id:
-                        # send them a message telling them that the player
-                        # entered the room
-                        mud.send_message(pid, "{} arrived via exit '{}'".format(players[id].name, ex))
-
-                # send the player a message telling them where they are now
-                mud.send_message(id, "You arrive at '{}'".format(players[id].room))
-
-                update_player_room(players[id])
-
-            # the specified exit wasn't found in the current room
-            else:
-                # send back an 'unknown exit' message
-                mud.send_message(id, "Unknown exit '{}'".format(ex))
+                //update_player_room(players[id]);
+            }
+            else {
+                status.queue(*id, format!("Unknown exit '{}'", room_name));
+            }
         }
         // 'take' command
-        elif command == "take"{
-            # store the player's current room
-            rm = rooms[players[id].room]
-            item = None
+        else if command == "take" {
+            // store the player's current room
+            let rm = rooms[players[id].room];
+            let item = None;
             
-            for room_item in rm["items"]:
-                if room_item.item.name.lower() == params.lower():
-                    item = room_item.item
-                    break
+            for room_item in rm["items"] {
+                if room_item.item.name.lower() == params.lower() {
+                    item = room_item.item;
+                    break;
+                }
+            }
 
-            if item != None:
-                mud.send_message(id, "You pick up the {}".format(item.name))
+            if item != None {
+                mud.send_message(id, "You pick up the {}".format(item.name));
 
-                players[id].inventory.add_item(item)
-            
-            else:
-                mud.send_message(id, "'{}' could not be found".format(item.name))
+                players[id].inventory.add_item(item);
+            }
+            else {
+                mud.send_message(id, "'{}' could not be found".format(item.name));
+            }
+
+            self.send(*id, message.to_string());
         }
         // 'status' command
         elif command == "status" {
-            message = ""
-            message += "Name: {}\n".format(players[id].name)
-            message += "Race: {}\n".format(players[id].race.name)
-            message += "Level: {}\n".format(players[id].level)
-            message += "Health: {} / {}\n".format(players[id].health, players[id].max_health)
+            let mut message = "";
+            message += "Name: {}\n".format(players[id].name);
+            message += "Race: {}\n".format(players[id].race.name);
+            message += "Level: {}\n".format(players[id].level);
+            message += "Health: {} / {}\n".format(players[id].health, players[id].max_health);
 
-            abilities = players[id].abilities
-            message += "STR: {} DEX: {} CON: {}\n".format(abilities.strength.value, abilities.dexterity.value, abilities.constitution.value)
-            message += "INT: {} WIS: {} CHA: {}\n".format(abilities.intelligence.value, abilities.wisdom.value, abilities.charisma.value)
+            abilities = players[id].abilities;
+            message += "STR: {} DEX: {} CON: {}\n".format(abilities.strength.value, abilities.dexterity.value, abilities.constitution.value);
+            message += "INT: {} WIS: {} CHA: {}\n".format(abilities.intelligence.value, abilities.wisdom.value, abilities.charisma.value);
 
-            mud.send_message(id, message)
+            self.send(*id, message.to_string());
         }
         // 'inventory' command
         elif command == "inventory" {
-            mud.send_message(id, players[id].inventory.get_display_string())
+            mud.send_message(id, players[id].inventory.get_display_string());
+
+            self.send(*id, message.to_string());
         }
         // 'quit' command
-        elif command == 'quit' {
-            mud.send_message(id, "Goodbye! Have a nice day!")
-            mud._handle_disconnect(id)
-        }*/
+        elif command == "quit" {
+            self.send(*id, "Goodbye! Have a nice day!".to_string());
+            mud._handle_disconnect(id);
+        }
         // some other, unrecognised command
         else { 
             // send back an 'unknown command' message
