@@ -28,6 +28,7 @@ impl RoomFactory {
                 description: "You're standing in the middle of an old worn road on the outskirts of Waterdeep, which stands before you to the north.".to_string(),
                 exits: [("north".to_string(), "City South Gate".to_string())].iter().cloned().collect(),
                 features: HashMap::new(),
+                items: HashMap::new(),
             }
         );
     }

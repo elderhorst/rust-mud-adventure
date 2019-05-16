@@ -1,3 +1,4 @@
+#[derive(Clone)]
 pub struct Ability {
     pub name: String,
     pub abbreviation: String,
@@ -11,6 +12,7 @@ impl Ability {
     }
 }
 
+#[derive(Clone)]
 pub struct Abilities {
     pub strength: Ability,
     pub dexterity: Ability,

@@ -1,5 +1,6 @@
 use game::ability::Abilities;
 
+#[derive(Clone)]
 pub struct Player {
     pub name: String,
     pub password: String,
@@ -30,6 +31,7 @@ impl Player {
     }
 }
 
+#[derive(Clone)]
 pub struct Status {
     pub main_menu: bool,
     pub logging_in: bool,
