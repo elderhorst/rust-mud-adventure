@@ -29,7 +29,6 @@ impl Game {
 
         // 'help' command
         if command == "help" {
-            // send the player back the list of possible commands
             status.queue(*id, "Commands:".to_string());
             
             status.queue(*id, "  look            - Describes the room that you are currently in, e.g. 'look'".to_string());
@@ -45,58 +44,47 @@ impl Game {
         }
         // 'look' command
         else if command == "look" {
-
-            // store the player's current room
-            let room_name = self.players.get(&id).unwrap().room.clone();
+            let room_name = self.players[&id].room.clone();
 
             // TODO: looking at items
             //let item = null;
 
-            // either the player is looking at a specific object, or the whole room
-            if self.rooms.get(&room_name).unwrap().features.contains_key(params) {
-                let feature: String = self.rooms.get(&room_name).unwrap().features[params].clone();
+            if self.rooms[&room_name].features.contains_key(params) {
+                let feature: String = self.rooms[&room_name].features[params].clone();
                 status.queue(*id, feature.to_string());
-                
             }
             /*else if item != None {
                 status.queue(*id, "Not yet implemented".to_string());
                 
             }*/
             else {
-                // send the player back the description of their current room
-                let description: String = self.rooms.get(&room_name).unwrap().description.clone();
+                let description: String = self.rooms[&room_name].description.clone();
                 status.queue(*id, description.to_string());
 
                 let mut players_here = Vec::new();
-                // go through every player in the game
                 let mut message: String = "".to_string();
+
                 for (_pid, pl) in self.players.iter() {
-                    // if they're in the same room as the player
-                    if pl.room == room_name {
-                        // ...and they have a name to be shown
-                        if pl.name != "" {
-                            // add their name to the list
-                            players_here.push(pl.name.clone());
+                    if pl.room == room_name && pl.name != "" {
+                        players_here.push(pl.name.clone());
 
-                            // send player a message containing the list of players in the room
-                            message += &"Players here:\n".to_string();
+                        message += &"Players here:\n".to_string();
 
-                            if players_here.len() != 0 {
-                                for player_here in players_here.iter() {
-                                    message += player_here;
-                                    message += &"\n".to_string();
-                                }
+                        if players_here.len() != 0 {
+                            for player_here in players_here.iter() {
+                                message += player_here;
+                                message += &"\n".to_string();
                             }
-                            else {
-                                message += &"None\n".to_string();
-                            }
+                        }
+                        else {
+                            message += &"None\n".to_string();
                         }
                     }
                 }
 
-                // send player a message containing the list of exits from this room
                 message += &"Exits are:\n".to_string();
-                for (name, _) in self.rooms.get(&room_name).unwrap().exits.iter() {
+
+                for (name, _) in self.rooms[&room_name].exits.iter() {
                     message += name;
                     message += &"\n".to_string();
                 }
@@ -107,11 +95,11 @@ impl Game {
         // 'go' command
         else if command == "go" {
             let ex = params.to_lowercase();
-            let player = self.players.get(&id).unwrap().clone();
+            let player = self.players[id].clone();
             let player_name = player.name.clone();
             let room_name = player.room.clone();
 
-            if self.rooms.get(&room_name).unwrap().exits.contains_key(&ex) {
+            if self.rooms[&room_name].exits.contains_key(&ex) {
                 for (pid, pl) in self.players.iter() {
                     if pid != id && pl.room == room_name {
                         status.queue(*pid, format!("{} left via exit '{}'", player_name, ex));
@@ -128,6 +116,7 @@ impl Game {
 
                 status.queue(*id, format!("You arrive at '{}'", room_name));
 
+                // TODO
                 //update_player_room(players[id]);
             }
             else {
@@ -137,6 +126,7 @@ impl Game {
         // 'take' command
         else if command == "take" {
             // store the player's current room
+            // TODO
             /*let rm = rooms[players[id].room];
             let item = None;
             
@@ -161,7 +151,7 @@ impl Game {
         }
         // 'status' command
         else if command == "status" {
-            let player = self.players.get(&id).unwrap().clone();
+            let player = self.players[id].clone();
 
             status.queue(*id, format!("Name: {}\n", player.name));
             status.queue(*id, format!("Race: {}\n", player.race));
@@ -174,7 +164,7 @@ impl Game {
         }
         // 'inventory' command
         else if command == "inventory" {
-            status.queue(*id, format!("Name: {}\n", self.players.get(&id).unwrap().inventory));
+            status.queue(*id, format!("Name: {}\n", self.players[id].inventory));
         }
         // 'quit' command
         else if command == "quit" {

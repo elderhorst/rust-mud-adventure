@@ -7,14 +7,11 @@ impl Game {
         
         // 'say' command
         if command == "say" {
-            let sender = self.players.get(&id).unwrap().name.clone();
-            let current_room = self.players.get(&id).unwrap().room.clone();
+            let sender = self.players[&id].name.clone();
+            let current_room = self.players[&id].room.clone();
 
-            // go through every player in the game
             for (id, pl) in self.players.iter() {
-                // if they're in the same room as the player
                 if current_room == pl.room {
-                    // send them a message telling them what the player said
                     status.queue(*id, format!("{} says: {}", sender, params));
                 }
             }
@@ -23,21 +20,15 @@ impl Game {
         else if command == "emote" {
             let emote = params.to_lowercase();
 
-            // go through all the players in the game
             for (pid, _pl) in self.players.iter() {
-                // display emote to all in the room
                 if self.players[pid].room == self.players[id].room {
-                    // send them a message telling them that the player
-                    // left the room
                     status.queue(*pid, format!("{} {}", self.players[id].name, emote));
                 }
             }
         }
         // 'shout' command
         else if command == "shout" {
-            // go through every player in the game
             for (pid, _pl) in self.players.iter() {
-                // send them a message telling them what the player said
                 status.queue(*pid, format!("{} shouts: {}", self.players[id].name, params));
             }
         }
@@ -73,9 +64,7 @@ impl Game {
             status.queue(*id, "Currently online:".to_string());
             let mut player_count = 0;
 
-            // go through every player in the game
             for (_, pl) in self.players.iter() {
-                // print every online name
                 status.queue(*id, format!("{}", pl.name));
 
                 player_count += 1;

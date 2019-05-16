@@ -5,9 +5,8 @@ use game::race::Race;
 impl Game {
     pub fn handle_cc_command(&mut self, id: &usize, command: &String, params: &String) -> CommandStatus {
         let mut status = CommandStatus::new();
-        // if the player hasn't given their name yet, use this first command as
-        // their name and move them to the starting room.
-        if self.players.get(&id).unwrap().name == "" {
+        
+        if self.players[&id].name == "" {
             let name: String = command.trim().to_string();
 
             if name == "" {
@@ -40,7 +39,7 @@ impl Game {
                 return true;
             }*/
             // TEMPORARY
-            if *command != self.players.get(&id).unwrap().password {
+            if *command != self.players[&id].password {
                 status.queue(*id, "Password not the same, please try again".to_string());
 
                 status.handled = true;
@@ -51,7 +50,7 @@ impl Game {
             let text = self.get_race_selection_message();
             status.queue(*id, text);
         }
-        else if self.players.get(&id).unwrap().status.confirmed_password && self.players.get(&id).unwrap().status.confirmed_race == false {
+        else if self.players[&id].status.confirmed_password && self.players[&id].status.confirmed_race == false {
             if command.find("help") != None {
                 let race_name = params.to_lowercase();
                 let mut message = "Race not found".to_string();
@@ -99,13 +98,13 @@ impl Game {
                 }*/
 
                 // send the new player a welcome message
-                status.queue(*id, format!("Welcome to the game, {}. Type 'help' for a list of commands. Have fun!", self.players.get(&id).unwrap().name));
+                status.queue(*id, format!("Welcome to the game, {}. Type 'help' for a list of commands. Have fun!", self.players[&id].name));
 
                 self.players.get_mut(&id).unwrap().room = "Old Road".to_string();
 
                 // send the new player the description of their current room
-                let room_name = self.players.get(&id).unwrap().name.to_string();
-                let description = self.rooms.get_mut(&room_name).unwrap().description.to_string();
+                let room_name = self.players[&id].room.clone();
+                let description = self.rooms[&room_name].description.clone();
                 status.queue(*id, description.to_string());
 
                 self.database.add_player(&self.players.get(&id).unwrap());
