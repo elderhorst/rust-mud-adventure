@@ -24,7 +24,7 @@ pub struct Abilities {
 
 impl Abilities {
     pub fn new() -> Abilities {
-        Abilities {
+        let mut abilities = Abilities {
             strength: Ability {
                 name: "Strength".to_string(),
                 abbreviation: "str".to_string(),
@@ -61,7 +61,16 @@ impl Abilities {
                 value: 8,
                 modifier: 0,
             },
-        }
+        };
+
+        abilities.strength.modifier = abilities.get_modifier(&abilities.strength.value);
+        abilities.dexterity.modifier = abilities.get_modifier(&abilities.dexterity.value);
+        abilities.constitution.modifier = abilities.get_modifier(&abilities.constitution.value);
+        abilities.intelligence.modifier = abilities.get_modifier(&abilities.intelligence.value);
+        abilities.wisdom.modifier = abilities.get_modifier(&abilities.wisdom.value);
+        abilities.charisma.modifier = abilities.get_modifier(&abilities.charisma.value);
+
+        abilities
     }
 
     pub fn remake(ste: i32, dex: i32, con: i32, int: i32, wis: i32, cha: i32) -> Abilities {
@@ -77,7 +86,7 @@ impl Abilities {
         abilities
     }
 
-    fn get_modifier(value: &i32) -> i32 {
+    fn get_modifier(&self, value: &i32) -> i32 {
         (value - 8) / 2
     }
 }

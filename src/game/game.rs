@@ -43,7 +43,7 @@ impl Game {
 
         for id in 0..self.clients.len() {
             let client = self.clients.get_mut(&id).unwrap();
-            let mut client_data = client.update();
+            let client_data = client.update();
 
             if client_data.command.len() != 0 {
                 data.push(client_data);

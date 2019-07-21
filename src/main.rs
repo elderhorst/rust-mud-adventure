@@ -13,9 +13,9 @@ fn main() {
 
     println!("Started server on port 8080");
 
-    for mut stream in listener.incoming() {
+    for stream in listener.incoming() {
         match stream {
-            Ok(mut stream) => {
+            Ok(stream) => {
                 mudserver.add_client(stream);
                 mudserver.send_message(0, format!("hello world {}", 0));
 

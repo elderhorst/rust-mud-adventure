@@ -30,7 +30,7 @@ impl CommandStatus {
                 sorted.insert(self.ids[index], text.to_string());
             }
             else {
-                let mut combined = sorted.get_mut(&index).unwrap();
+                let combined = sorted.get_mut(&index).unwrap();
                 combined.push_str(&self.messages[index]);
             }
         }
