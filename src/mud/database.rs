@@ -37,7 +37,7 @@ impl Database {
                     health          INT NOT NULL,
                     max_health      INT NOT NULL,
                     level           INT NOT NULL,
-                    inventory       TEXT NOT NULL,
+                    inventory       TEXT NOT NULL
                     )",
             NO_PARAMS,
         ).unwrap();

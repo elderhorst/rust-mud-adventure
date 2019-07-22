@@ -17,7 +17,7 @@ fn main() {
         match stream {
             Ok(stream) => {
                 mudserver.add_client(stream);
-                mudserver.send_message(0, format!("hello world {}", 0));
+                mudserver.send_message(0, format!("Connected to the server. Please enter a name: {}", ""));
 
                 println!("Connection opened");
             }

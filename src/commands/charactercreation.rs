@@ -79,10 +79,12 @@ impl Game {
                     }
                 }
 
-                // TODO
-                /*if selected_race == None {
-                    return false;
-                }*/
+                if selected_race.name == Race::empty().name {
+                    status.queue(*id, format!("Error processing the name '{}', please try again", selected_race.name));
+                    status.handled = true;
+
+                    return status;
+                }
 
                 self.players.get_mut(&id).unwrap().race = selected_race.name;
                 self.players.get_mut(&id).unwrap().status.logged_in = true;
