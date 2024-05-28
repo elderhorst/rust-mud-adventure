@@ -6,12 +6,6 @@ pub struct Ability {
     pub modifier: i32,
 }
 
-impl Ability {
-    pub fn set_value(&mut self, value: i32) {
-        self.value = value;
-    }
-}
-
 #[derive(Clone)]
 pub struct Abilities {
     pub strength: Ability,
@@ -23,7 +17,7 @@ pub struct Abilities {
 }
 
 impl Abilities {
-    pub fn new() -> Abilities {
+    pub fn new() -> Self {
         let mut abilities = Abilities {
             strength: Ability {
                 name: "Strength".to_string(),
@@ -69,19 +63,6 @@ impl Abilities {
         abilities.intelligence.modifier = abilities.get_modifier(&abilities.intelligence.value);
         abilities.wisdom.modifier = abilities.get_modifier(&abilities.wisdom.value);
         abilities.charisma.modifier = abilities.get_modifier(&abilities.charisma.value);
-
-        abilities
-    }
-
-    pub fn remake(ste: i32, dex: i32, con: i32, int: i32, wis: i32, cha: i32) -> Abilities {
-        let mut abilities = Abilities::new();
-
-        abilities.strength.set_value(ste);
-        abilities.dexterity.set_value(dex);
-        abilities.constitution.set_value(con);
-        abilities.intelligence.set_value(int);
-        abilities.wisdom.set_value(wis);
-        abilities.charisma.set_value(cha);
 
         abilities
     }

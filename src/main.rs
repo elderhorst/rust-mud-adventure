@@ -1,32 +1,24 @@
-extern crate rust_mud;
+use game::{game_stream::GameStream, local_stream::LocalStream};
 
-use rust_mud::mud::mudserver::MudServer;
+use crate::game::game::Game;
 
-use std::net::TcpListener;
-use std::io::ErrorKind;
+mod game {
+	pub mod commands;
+	pub mod ability;
+	pub mod game;
+	pub mod game_stream;
+	pub mod heritage;
+	pub mod local_stream;
+	pub mod player;
+	pub mod room;
+}
+mod server;
+mod util;
 
 fn main() {
-    let listener = TcpListener::bind("127.0.0.1:8080").unwrap();
-    listener.set_nonblocking(true).expect("Error: cannot set non-blocking");
-
-    let mut mudserver = MudServer::new();
-
-    println!("Started server on port 8080");
-
-    for stream in listener.incoming() {
-        match stream {
-            Ok(stream) => {
-                mudserver.add_client(stream);
-                mudserver.send_message(0, format!("Connected to the server. Please enter a name: {}", ""));
-
-                println!("Connection opened");
-            }
-            Err(ref e) if e.kind() == ErrorKind::WouldBlock => {}
-            Err(e) => {
-                println!("Unable to connect: {}", e);
-            }
-        }
-
-        mudserver.update();
-    }
+    let mut game = Game::new();
+	
+	game.add_player(GameStream::Local(LocalStream::new()));
+	
+	game.run();
 }

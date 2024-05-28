@@ -1,17 +1,15 @@
-//use mud::rusqlite::types::ToSql;
-use mud::rusqlite::{Connection, /*MappedRows,*/ NO_PARAMS};
+use rusqlite::Connection;
+use rusqlite::Result;
 use std::path::Path;
 
-use game::ability::Abilities;
-use game::player::Player;
-use game::player::Status;
+use crate::game::player::Player;
 
 pub struct Database {
     conn: Connection,
 }
 
 impl Database {
-    pub fn new() -> Database {
+    pub fn new() -> Self {
         let mut database = Database {
             conn: Connection::open(Path::new("data.db")).unwrap(),
         };
@@ -21,6 +19,7 @@ impl Database {
         database
     }
 
+	// TODO: IMPLEMENT RESULT RETURN TYPE
     fn setup_table(&mut self) {
         self.conn.execute(
             "CREATE TABLE IF NOT EXISTS players (
@@ -39,10 +38,10 @@ impl Database {
                     level           INT NOT NULL,
                     inventory       TEXT NOT NULL
                     )",
-            NO_PARAMS,
-        ).unwrap();
+            ()
+		).unwrap();
     }
-
+	/*
     fn get_data_iter(&mut self, command: &String) -> Vec<Player> {
         let mut stmt = self.conn
         .prepare(&command)
@@ -72,31 +71,34 @@ impl Database {
 
         players
     }
-
+	*/
     pub fn does_player_exist(&mut self, name: &String) -> bool {
+		println!("The function does_player_exist is not implemented yet: {}", name);
         false
     }
 
     pub fn does_password_match(&mut self, text1: &String, text2: &String) -> bool {
+		println!("The function does_password_match is not implemented yet: {} {}", text1, text2);
         true
     }
 
     pub fn add_player(&mut self, player: &Player) {
-
+		println!("The function add_player is not implemented yet: {}", player.name);
     }
 
     pub fn update_player_room(&mut self, player: &Player) {
-        //
+        println!("The function update_player_room is not implemented yet: {}", player.room_id);
     }
 
     pub fn load_player_data(&mut self, player: &Player) {
-        let command = format!("SELECT name FROM players WHERE name={}", player.name);
+		println!("The function load_player_data is not implemented yet: {}", player.name);
+        /*let command = format!("SELECT name FROM players WHERE name={}", player.name);
 
         let players = self.get_data_iter(&command);
 
         if players.len() == 1 {
             //player = &players[0];
             //TODO
-        }
+        }*/
     }
 }
