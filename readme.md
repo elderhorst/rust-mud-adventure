@@ -18,13 +18,13 @@ In this interation, the primary goal is to have a working text adventure like en
 
 Currently, the project can be run and guides the user through account and character creation, before placing the player in the world where they can move around and interact with it.
 
-ToDo
+### ToDo
 
-- Fix bug with moving between rooms in the world.
 - Loading and saving player data to the database.
 - Server functionality for the project.
 - Rework how bonuses work for heritages. (Possibly make them feats instead.)
 - Features in Rooms.
+- Resolve inconsistent line breaks between different commands.
 
 # Documentation
 
