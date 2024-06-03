@@ -16,33 +16,32 @@ impl Game {
 	}
 	
 	fn go(&mut self, id: &usize, params: &String) {
-		let ex = params.to_lowercase();
+		let exit_name = params.to_lowercase();
 		let player = self.players[id].clone();
 		let player_name = player.name.clone();
-		let room_id = player.room_id.clone();
+		let origin_id = player.room_id.clone();
 
-		if self.rooms[&room_id].exits.contains_key(&ex) {
+		if self.rooms[&origin_id].exits.contains_key(&exit_name) {
 			for (pid, pl) in self.players.iter() {
-				if pid != id && pl.room_id == room_id {
-					self.messages.queue(*pid, format!("{} left via exit '{}'", player_name, ex));
+				if pid != id && pl.room_id == origin_id {
+					self.messages.queue(*pid, format!("{} left via exit '{}'", player_name, exit_name));
 				}
 			}
 
-			self.players.get_mut(&id).unwrap().room_id = room_id.clone();
+			let destination_id = self.rooms[&origin_id].exits[&exit_name];
+			self.players.get_mut(&id).unwrap().room_id = destination_id;
 
 			for (pid, pl) in self.players.iter() {
-				if pid != id && pl.room_id == room_id {
-					self.messages.queue(*pid, format!("{} arrived via exit '{}'", player_name, ex));
+				if pid != id && pl.room_id == destination_id {
+					self.messages.queue(*pid, format!("{} arrived via exit '{}'", player_name, exit_name));
 				}
 			}
 
-			self.messages.queue(*id, format!("You arrive at '{}'", room_id));
-
-			// TODO
-			//update_player_room(players[id]);
+			self.messages.queue(*id, format!("You arrive at '{}'", self.rooms[&destination_id].name));
+			self.messages.queue(*id, format!("{}", self.rooms[&destination_id].description));
 		}
 		else {
-			self.messages.queue(*id, format!("Unknown exit '{}'", room_id));
+			self.messages.queue(*id, format!("Unknown exit '{}'", exit_name));
 		}
 	}
 	
