@@ -86,7 +86,7 @@ impl Game {
 		
 		if offset != input.len() {
 			command = input.to_string();
-			params = command.split_off(offset);
+			params = command.split_off(offset).trim().to_string();
 		}
 		else {
 			command = input.to_string();
