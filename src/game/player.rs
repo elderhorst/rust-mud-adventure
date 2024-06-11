@@ -32,7 +32,7 @@ impl Player {
 			room_id: 0,
 			state: PlayerState::Login,
 			
-			abilities: Abilities::new(),
+			abilities: Abilities::default(),
 			heritage: usize::MIN,
 			health: 1,
 			max_health: 1,
