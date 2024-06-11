@@ -12,7 +12,7 @@ impl Game {
 			self.set_name(&id, &command);
 		}
 		else if self.players[&id].password == "" {
-			self.set_password(&id, &command);
+			self.process_password(&id, &command);
 		}
 		else if self.players[&id].verified == false {
 			self.confirm_password(&id, &command);
@@ -31,23 +31,41 @@ impl Game {
 			self.messages.queue(*id, "Invalid name entered".to_string());
 		}
 		else if self.database.does_player_exist(&name) {
-			self.messages.queue(*id, "A character already has that name".to_string());
+			self.players.get_mut(&id).unwrap().name = name;
+			
+			self.messages.queue(*id, format!("Log in to account for username '{}':", self.players[&id].name));
+			self.messages.queue(*id, "Enter password:".to_string());
 		}
 		else {
 			self.players.get_mut(&id).unwrap().name = name;
-
+			
+			self.messages.queue(*id, format!("Creating an account for username '{}':", self.players[&id].name));
 			self.messages.queue(*id, "Enter a password:".to_string());
 		}
 	}
 	
-	fn set_password(&mut self, id: &usize, command: &String) {
+	fn process_password(&mut self, id: &usize, command: &String) {
 		let config = Config::default();
 		let salt = b"randomsalt";
 		let hash = argon2::hash_encoded(command.as_bytes(), salt, &config).unwrap();
+		
+		if self.database.does_player_exist(&self.players[&id].name) {
+			if self.database.does_password_match(&self.players[&id].name, &hash) {
+				let data = self.database.load_player_data(&self.players[&id].name);
+				
+				self.players.insert(*id, data.unwrap());
+			
+				self.set_new_player_to_world_state(&id);
+			}
+			else {
+				self.messages.queue(*id, "Incorrect password, please try again".to_string());
+			}
+		}
+		else {
+			self.players.get_mut(&id).unwrap().password = hash;
 
-		self.players.get_mut(&id).unwrap().password = hash;
-
-		self.messages.queue(*id, "Enter password again to confirm".to_string());
+			self.messages.queue(*id, "Enter password again to confirm".to_string());
+		}
 	}
 	
 	fn confirm_password(&mut self, id: &usize, command: &String) {

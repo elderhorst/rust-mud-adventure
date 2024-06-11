@@ -5,6 +5,8 @@ impl Game {
 
 		if self.players[&id].heritage == usize::MIN {
 			if self.choose_heritage(&id, &command, &params) {
+				self.database.add_player(&self.players[&id]);
+				
 				self.queue_new_player_message(id);
 				self.set_new_player_to_world_state(id);
 			}
