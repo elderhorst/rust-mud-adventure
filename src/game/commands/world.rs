@@ -22,13 +22,16 @@ impl Game {
 		let origin_id = player.room_id.clone();
 
 		if self.rooms[&origin_id].exits.contains_key(&exit_name) {
+			let destination_id = self.rooms[&origin_id].exits[&exit_name];
+			
+			self.database.update_player_room(player.name, destination_id);
+			
 			for (pid, pl) in self.players.iter() {
 				if pid != id && pl.room_id == origin_id {
 					self.messages.queue(*pid, format!("{} left via exit '{}'", player_name, exit_name));
 				}
 			}
 
-			let destination_id = self.rooms[&origin_id].exits[&exit_name];
 			self.players.get_mut(&id).unwrap().room_id = destination_id;
 
 			for (pid, pl) in self.players.iter() {

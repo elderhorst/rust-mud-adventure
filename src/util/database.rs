@@ -1,7 +1,5 @@
 use rusqlite::Connection;
-use rusqlite::Error;
 use rusqlite::Result;
-use rusqlite::Row;
 use std::path::Path;
 
 use crate::game::ability::Abilities;
@@ -115,8 +113,13 @@ impl Database {
 		}
 	}
 
-	pub fn update_player_room(&mut self, player: &Player) {
-		println!("The function update_player_room is not implemented yet: {}", player.room_id);
+	pub fn update_player_room(&mut self, player_name: String, room_id: usize) {
+		let command = format!("UPDATE players SET room = '{}' where name = '{}'", room_id, player_name);
+		
+		match self.conn.execute(&command, []) {
+			Ok(_) => {},
+			Err(err) => println!("Update player room failed: {}", err),
+		}
 	}
 
 	pub fn load_player_data(&mut self, player_name: &String) -> Result<Player> {
