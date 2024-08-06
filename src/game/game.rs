@@ -121,6 +121,10 @@ impl Game {
 	pub fn set_new_player_to_world_state(&mut self, id: &usize) {
 		self.players.get_mut(&id).unwrap().room_id = 1;
 		
+		self.set_existing_player_to_world_state(id);
+	}
+	
+	pub fn set_existing_player_to_world_state(&mut self, id: &usize) {
 		let room = &self.rooms[&self.players[&id].room_id];
 		self.messages.queue(*id, room.description.to_string());
 		

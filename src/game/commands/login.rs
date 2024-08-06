@@ -55,7 +55,7 @@ impl Game {
 				
 				self.players.insert(*id, data.unwrap());
 			
-				self.set_new_player_to_world_state(&id);
+				self.set_existing_player_to_world_state(&id);
 			}
 			else {
 				self.messages.queue(*id, "Incorrect password, please try again".to_string());
